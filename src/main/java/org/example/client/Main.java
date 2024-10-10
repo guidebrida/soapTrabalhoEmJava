@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    private static List<Order> orderList = new ArrayList<>(); // Lista de ordens
     private static OrderService orderService;
 
     public static void main(String[] args) {
@@ -44,6 +43,14 @@ public class Main {
             }
         });
 
+        JButton excluirOrdemPorId = new JButton("Excluir OS");
+        excluirOrdemPorId.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                excluirporId();
+            }
+        });
+
         // Botão para sair
         JButton sairButton = new JButton("Sair");
         sairButton.addActionListener(new ActionListener() {
@@ -56,6 +63,7 @@ public class Main {
         // Adiciona os botões à janela
         menuFrame.add(criarOrdemButton);
         menuFrame.add(exibirOrdensButton);
+        menuFrame.add(excluirOrdemPorId);
         menuFrame.add(sairButton);
 
         // Exibe o menu principal
@@ -90,17 +98,12 @@ public class Main {
                 product.setId(products.size() + 1);
                 product.setQuantidade(quantidade);
                 products.add(product);
-
                 Order order = new Order();
+                order.setId(obterNovoId());
                 order.setEndereco(endereco);
                 order.setStatus(status);
-                order.getProducts().addAll(products); // Adiciona todos os produtos
+                order.getProducts().addAll(products);
                 orderService.create(order);
-
-                // Adiciona a ordem à lista local
-                orderList.add(order);
-
-                // Limpa os campos
                 productNameField.setText("");
                 quantidadeField.setText("");
                 enderecoField.setText("");
@@ -133,8 +136,19 @@ public class Main {
         frame.setVisible(true);
     }
 
+    private static int obterNovoId() {
+        List<Order> orders = orderService.getAll();
+        return orders.stream()
+                .mapToInt(Order::getId)
+                .max()
+                .orElse(0) + 1;
+    }
+
     private static void exibirOrdens() {
-        if (orderList.isEmpty()) {
+        // Busca as ordens diretamente do servidor SOAP
+        List<Order> orderList = orderService.getAll(); // Supondo que o serviço tem um método 'getOrders()'
+
+        if (orderList == null || orderList.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nenhuma ordem criada.");
             return;
         }
@@ -153,4 +167,54 @@ public class Main {
         }
         JOptionPane.showMessageDialog(null, ordens.toString(), "Ordens Criadas", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private static void excluirporId() {
+        JFrame frame = new JFrame("Excluir Ordem");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(300, 150);
+        frame.setLayout(new FlowLayout());
+
+        JLabel labelId = new JLabel("Insira o ID da Ordem a ser excluída:");
+        JTextField idField = new JTextField(10);
+
+        JButton excluirButton = new JButton("Excluir");
+
+        excluirButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int orderId = Integer.parseInt(idField.getText());
+
+                    // Chama o serviço SOAP para deletar a ordem com o ID fornecido
+                    orderService.delete(orderId); // Supondo que o serviço tenha o método delete
+
+                    JOptionPane.showMessageDialog(frame, "Ordem excluída com sucesso!");
+
+                    frame.dispose();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "ID inválido. Por favor, insira um número válido.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro ao excluir a ordem: " + ex.getMessage());
+                }
+            }
+        });
+
+        JButton cancelarButton = new JButton("Cancelar");
+        cancelarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
+        // Adiciona os componentes ao frame
+        frame.add(labelId);
+        frame.add(idField);
+        frame.add(excluirButton);
+        frame.add(cancelarButton);
+
+        // Torna o frame visível
+        frame.setVisible(true);
+    }
+
 }

@@ -26,6 +26,8 @@ public class ObjectFactory {
 
     private final static QName _Create_QNAME = new QName("http://example.org/", "create");
     private final static QName _CreateResponse_QNAME = new QName("http://example.org/", "createResponse");
+    private final static QName _Delete_QNAME = new QName("http://example.org/", "delete");
+    private final static QName _DeleteResponse_QNAME = new QName("http://example.org/", "deleteResponse");
     private final static QName _GetAll_QNAME = new QName("http://example.org/", "getAll");
     private final static QName _GetAllResponse_QNAME = new QName("http://example.org/", "getAllResponse");
     private final static QName _UpdateStatus_QNAME = new QName("http://example.org/", "updateStatus");
@@ -52,6 +54,22 @@ public class ObjectFactory {
      */
     public CreateResponse createCreateResponse() {
         return new CreateResponse();
+    }
+
+    /**
+     * Create an instance of {@link Delete }
+     * 
+     */
+    public Delete createDelete() {
+        return new Delete();
+    }
+
+    /**
+     * Create an instance of {@link DeleteResponse }
+     * 
+     */
+    public DeleteResponse createDeleteResponse() {
+        return new DeleteResponse();
     }
 
     /**
@@ -126,6 +144,32 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://example.org/", name = "createResponse")
     public JAXBElement<CreateResponse> createCreateResponse(CreateResponse value) {
         return new JAXBElement<CreateResponse>(_CreateResponse_QNAME, CreateResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Delete }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link Delete }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://example.org/", name = "delete")
+    public JAXBElement<Delete> createDelete(Delete value) {
+        return new JAXBElement<Delete>(_Delete_QNAME, Delete.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link DeleteResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://example.org/", name = "deleteResponse")
+    public JAXBElement<DeleteResponse> createDeleteResponse(DeleteResponse value) {
+        return new JAXBElement<DeleteResponse>(_DeleteResponse_QNAME, DeleteResponse.class, null, value);
     }
 
     /**

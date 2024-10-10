@@ -18,14 +18,18 @@ public class OrderService {
     }
 
     @WebMethod
-    public void updateStatus(Long id, String status){
+    public void updateStatus(int id, String status) {
         orderList.forEach(order -> {
-            if (id.equals(order.getId())){
+            if (id == order.getId()) {
                 order.setStatus(status);
             }
         });
     }
 
+    @WebMethod
+    public void delete(int id) {
+        orderList.removeIf(order -> id == order.getId());
+    }
     @WebMethod
     public List<Order> getAll(){
         return orderList;

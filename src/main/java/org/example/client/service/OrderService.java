@@ -45,6 +45,18 @@ public interface OrderService {
      * @param arg0
      */
     @WebMethod
+    @RequestWrapper(localName = "delete", targetNamespace = "http://example.org/", className = "org.example.client.service.Delete")
+    @ResponseWrapper(localName = "deleteResponse", targetNamespace = "http://example.org/", className = "org.example.client.service.DeleteResponse")
+    @Action(input = "http://example.org/OrderService/deleteRequest", output = "http://example.org/OrderService/deleteResponse")
+    public void delete(
+        @WebParam(name = "arg0", targetNamespace = "")
+        int arg0);
+
+    /**
+     * 
+     * @param arg0
+     */
+    @WebMethod
     @RequestWrapper(localName = "create", targetNamespace = "http://example.org/", className = "org.example.client.service.Create")
     @ResponseWrapper(localName = "createResponse", targetNamespace = "http://example.org/", className = "org.example.client.service.CreateResponse")
     @Action(input = "http://example.org/OrderService/createRequest", output = "http://example.org/OrderService/createResponse")
