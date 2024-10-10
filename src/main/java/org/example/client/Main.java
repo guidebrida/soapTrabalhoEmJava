@@ -19,13 +19,11 @@ public class Main {
         OrderServiceService service = new OrderServiceService();
         orderService = service.getOrderServicePort();
 
-        // Cria a janela do menu principal
         JFrame menuFrame = new JFrame("Menu Principal");
         menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         menuFrame.setSize(400, 200);
         menuFrame.setLayout(new GridLayout(3, 1)); // 3 linhas, 1 coluna
 
-        // Botão para criar uma nova ordem
         JButton criarOrdemButton = new JButton("Criar Nova Ordem");
         criarOrdemButton.addActionListener(new ActionListener() {
             @Override
@@ -34,7 +32,6 @@ public class Main {
             }
         });
 
-        // Botão para exibir ordens
         JButton exibirOrdensButton = new JButton("Exibir Ordens");
         exibirOrdensButton.addActionListener(new ActionListener() {
             @Override
@@ -51,7 +48,14 @@ public class Main {
             }
         });
 
-        // Botão para sair
+        JButton editarStatusButton = new JButton("Editar Status da OS");
+        editarStatusButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editarStatusOrdem();
+            }
+        });
+
         JButton sairButton = new JButton("Sair");
         sairButton.addActionListener(new ActionListener() {
             @Override
@@ -60,13 +64,11 @@ public class Main {
             }
         });
 
-        // Adiciona os botões à janela
         menuFrame.add(criarOrdemButton);
         menuFrame.add(exibirOrdensButton);
         menuFrame.add(excluirOrdemPorId);
+        menuFrame.add(editarStatusButton);
         menuFrame.add(sairButton);
-
-        // Exibe o menu principal
         menuFrame.setVisible(true);
     }
 
@@ -76,15 +78,65 @@ public class Main {
         JFrame frame = new JFrame("Criar Nova Ordem");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(400, 300);
-        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS)); // Alinha verticalmente
+        frame.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        JLabel labelProduto = new JLabel("Produto:");
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        frame.add(labelProduto, gbc);
 
         JTextField productNameField = new JTextField(10);
-        JTextField quantidadeField = new JTextField(5);
-        JTextField enderecoField = new JTextField(20);
-        JTextField statusField = new JTextField(10);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        frame.add(productNameField, gbc);
 
-        // Botão para criar a ordem
+        JLabel labelQuantidade = new JLabel("Quantidade:");
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        frame.add(labelQuantidade, gbc);
+
+        JTextField quantidadeField = new JTextField(5);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        frame.add(quantidadeField, gbc);
+
+        JLabel labelEndereco = new JLabel("Endereço:");
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        frame.add(labelEndereco, gbc);
+
+        JTextField enderecoField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        frame.add(enderecoField, gbc);
+
+        JLabel labelStatus = new JLabel("Status:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        frame.add(labelStatus, gbc);
+
+        JTextField statusField = new JTextField(10);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        frame.add(statusField, gbc);
+
         JButton jButtonCriarOrdem = new JButton("Criar Ordem");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1;
+        frame.add(jButtonCriarOrdem, gbc);
+
+        JButton jButtonRetornar = new JButton("Retornar");
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        frame.add(jButtonRetornar, gbc);
+
         jButtonCriarOrdem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,11 +150,13 @@ public class Main {
                 product.setId(products.size() + 1);
                 product.setQuantidade(quantidade);
                 products.add(product);
+
                 Order order = new Order();
                 order.setId(obterNovoId());
                 order.setEndereco(endereco);
                 order.setStatus(status);
                 order.getProducts().addAll(products);
+
                 orderService.create(order);
                 productNameField.setText("");
                 quantidadeField.setText("");
@@ -113,25 +167,12 @@ public class Main {
             }
         });
 
-        JButton jButtonRetornar = new JButton("Retornar");
         jButtonRetornar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 frame.dispose();
             }
         });
-
-        // Adiciona os componentes ao frame, agora organizados verticalmente
-        frame.add(new JLabel("Produto:"));
-        frame.add(productNameField);
-        frame.add(new JLabel("Quantidade:"));
-        frame.add(quantidadeField);
-        frame.add(new JLabel("Endereço:"));
-        frame.add(enderecoField);
-        frame.add(new JLabel("Status:"));
-        frame.add(statusField);
-        frame.add(jButtonCriarOrdem);
-        frame.add(jButtonRetornar);
 
         frame.setVisible(true);
     }
@@ -145,8 +186,7 @@ public class Main {
     }
 
     private static void exibirOrdens() {
-        // Busca as ordens diretamente do servidor SOAP
-        List<Order> orderList = orderService.getAll(); // Supondo que o serviço tem um método 'getOrders()'
+        List<Order> orderList = orderService.getAll();
 
         if (orderList == null || orderList.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nenhuma ordem criada.");
@@ -171,13 +211,36 @@ public class Main {
     private static void excluirporId() {
         JFrame frame = new JFrame("Excluir Ordem");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(300, 150);
-        frame.setLayout(new FlowLayout());
+        frame.setSize(400, 200);
+        frame.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel labelId = new JLabel("Insira o ID da Ordem a ser excluída:");
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 0; // Linha 0
+        gbc.gridwidth = 2; // Abrange duas colunas
+        frame.add(labelId, gbc);
+
         JTextField idField = new JTextField(10);
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 1; // Linha 1
+        gbc.gridwidth = 2; // Abrange duas colunas
+        frame.add(idField, gbc);
 
         JButton excluirButton = new JButton("Excluir");
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 2; // Linha 2
+        gbc.gridwidth = 1; // Ocupar uma célula
+        frame.add(excluirButton, gbc);
+
+        JButton cancelarButton = new JButton("Cancelar");
+        gbc.gridx = 1; // Coluna 1
+        gbc.gridy = 2; // Linha 2
+        gbc.gridwidth = 1; // Ocupar uma célula
+        frame.add(cancelarButton, gbc);
 
         excluirButton.addActionListener(new ActionListener() {
             @Override
@@ -185,11 +248,9 @@ public class Main {
                 try {
                     int orderId = Integer.parseInt(idField.getText());
 
-                    // Chama o serviço SOAP para deletar a ordem com o ID fornecido
-                    orderService.delete(orderId); // Supondo que o serviço tenha o método delete
+                    orderService.delete(orderId);
 
                     JOptionPane.showMessageDialog(frame, "Ordem excluída com sucesso!");
-
                     frame.dispose();
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(frame, "ID inválido. Por favor, insira um número válido.");
@@ -199,7 +260,6 @@ public class Main {
             }
         });
 
-        JButton cancelarButton = new JButton("Cancelar");
         cancelarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,14 +267,80 @@ public class Main {
             }
         });
 
-        // Adiciona os componentes ao frame
-        frame.add(labelId);
-        frame.add(idField);
-        frame.add(excluirButton);
-        frame.add(cancelarButton);
-
-        // Torna o frame visível
         frame.setVisible(true);
     }
+
+    private static void editarStatusOrdem() {
+        JFrame frame = new JFrame("Editar Status da Ordem");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(400, 200);
+        frame.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel labelId = new JLabel("ID da Ordem:");
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 0; // Linha 0
+        frame.add(labelId, gbc);
+
+        JTextField idField = new JTextField(10);
+        gbc.gridx = 1; // Coluna 1
+        gbc.gridy = 0; // Linha 0
+        frame.add(idField, gbc);
+
+        JLabel labelNovoStatus = new JLabel("Novo Status:");
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 1; // Linha 1
+        frame.add(labelNovoStatus, gbc);
+
+        JTextField novoStatusField = new JTextField(10);
+        gbc.gridx = 1; // Coluna 1
+        gbc.gridy = 1; // Linha 1
+        frame.add(novoStatusField, gbc);
+
+        JButton editarButton = new JButton("Editar Status");
+        gbc.gridx = 0; // Coluna 0
+        gbc.gridy = 2; // Linha 2
+        gbc.gridwidth = 1; // Ocupar uma célula
+        frame.add(editarButton, gbc);
+
+        JButton cancelarButton = new JButton("Cancelar");
+        gbc.gridx = 1; // Coluna 1
+        gbc.gridy = 2; // Linha 2
+        gbc.gridwidth = 1; // Ocupar uma célula
+        frame.add(cancelarButton, gbc);
+
+        editarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int orderId = Integer.parseInt(idField.getText());
+                    String novoStatus = novoStatusField.getText();
+
+                    orderService.updateStatus(orderId, novoStatus);
+
+                    JOptionPane.showMessageDialog(frame, "Status atualizado com sucesso!");
+                    frame.dispose();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "ID inválido. Por favor, insira um número válido.");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro ao atualizar o status: " + ex.getMessage());
+                }
+            }
+        });
+
+        cancelarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
+        frame.setVisible(true);
+    }
+
+
 
 }

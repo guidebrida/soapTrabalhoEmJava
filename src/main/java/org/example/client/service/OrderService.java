@@ -27,21 +27,6 @@ public interface OrderService {
 
     /**
      * 
-     * @param arg1
-     * @param arg0
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateStatus", targetNamespace = "http://example.org/", className = "org.example.client.service.UpdateStatus")
-    @ResponseWrapper(localName = "updateStatusResponse", targetNamespace = "http://example.org/", className = "org.example.client.service.UpdateStatusResponse")
-    @Action(input = "http://example.org/OrderService/updateStatusRequest", output = "http://example.org/OrderService/updateStatusResponse")
-    public void updateStatus(
-        @WebParam(name = "arg0", targetNamespace = "")
-        Long arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
-
-    /**
-     * 
      * @param arg0
      */
     @WebMethod
@@ -75,5 +60,20 @@ public interface OrderService {
     @ResponseWrapper(localName = "getAllResponse", targetNamespace = "http://example.org/", className = "org.example.client.service.GetAllResponse")
     @Action(input = "http://example.org/OrderService/getAllRequest", output = "http://example.org/OrderService/getAllResponse")
     public List<Order> getAll();
+
+    /**
+     * 
+     * @param arg1
+     * @param arg0
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateStatus", targetNamespace = "http://example.org/", className = "org.example.client.service.UpdateStatus")
+    @ResponseWrapper(localName = "updateStatusResponse", targetNamespace = "http://example.org/", className = "org.example.client.service.UpdateStatusResponse")
+    @Action(input = "http://example.org/OrderService/updateStatusRequest", output = "http://example.org/OrderService/updateStatusResponse")
+    public void updateStatus(
+        @WebParam(name = "arg0", targetNamespace = "")
+        int arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1);
 
 }
